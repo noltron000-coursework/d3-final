@@ -15,22 +15,39 @@ const loadJSON = (path, callback) => {
 	xobj.send(null)
 }
 
-
-class HappinessStudy {
-	constructor (file) {
-		loadJSON(file, (response) => {
-			// Parse JSON string into object
-			const actual_JSON = JSON.parse(response)
-			console.log(actual_JSON[0])
-		})
-
-		this.year = null
-		this.numCountries = null
-	}
+const addTextToEl = (el, text) => {
+	el.textContent = text
 }
 
+// Learned to apply optional parameters from these sources:
+// https://simonsmith.io/destructuring-objects-as-function-parameters-in-es6
+// https://stackoverflow.com/questions/11796093/is-there-a-way-to-provide-named-parameters-in-a-function-call-in-javascript
+const populateEls = ({
+	yearText = '',
+	numCountriesText = '',
+} = {}) => {
+	const elYear = document.getElementById('data-year')
+	addTextToEl(elYear, yearText)
+	const elNumCountries = document.getElementById('data-num-countries')
+	addTextToEl(elNumCountries, numCountriesText)
+}
 
-const elYear = document.getElementById('data-year')
-const elNumCountries = document.getElementById('data-num-countries')
+const StudyHappiness = (year) => {
+	const file = `./data/${year}.json`
+
+	loadJSON(file, (response) => {
+		// Parse JSON string into object.
+		const actualJSON = JSON.parse(response)
+
+		// Do Stuff
+
+		// Populate elements from earlier construction.
+		populateEls({
+			'yearText': year,
+			'numCountriesText': numCountries,
+		})
+	})
+}
+
 // testing HappinessStudy
-const hello = new HappinessStudy('./data/2019.json')
+StudyHappiness('2019')
