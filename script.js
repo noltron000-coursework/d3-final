@@ -37,14 +37,25 @@ const StudyHappiness = (year) => {
 
 	loadJSON(file, (response) => {
 		// Parse JSON string into object.
-		const actualJSON = JSON.parse(response)
+		const data = JSON.parse(response)
 
-		// Do Stuff
+		// Get a set of all unique countries.
+		// Start by initializing aforementioned set.
+		const countries = new Set()
+		// Reducer gets ran recursively for each entry
+		// in the data array, which is called with reduce.
+		const reducer = (accumulator, entry) => {
+			accumulator.add(entry['Country or region'])
+			return accumulator
+		}
+		// Countries is the default start-value for the
+		// accumulator, which gets modified/filled.
+		data.reduce(reducer, countries)
 
 		// Populate elements from earlier construction.
 		populateEls({
 			'yearText': year,
-			'numCountriesText': numCountries,
+			'numCountriesText': countries.size,
 		})
 	})
 }
