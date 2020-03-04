@@ -28,12 +28,12 @@ const populateEls = ({
 	elNumCountries.textContent = numCountriesText
 }
 
-const createFullTable = (data, sortBy = 'Generosity') => {
+const createFullTable = (data, sortBy = 'Overall rank') => {
 	// filter data by category
 	data = data
 	.filter(entry => sortBy in entry)
 	.sort((left, right) => right[sortBy] - left[sortBy])
-	.slice(0, 10)
+	// .slice(0, 10) // I want to show everything off :O
 
 	// create a list of unique categories
 	const categories = [...getUniqueCategories(data)]
