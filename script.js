@@ -28,9 +28,85 @@ const populateEls = ({
 	elNumCountries.textContent = numCountriesText
 }
 
+const createFullTable = (data, sortBy = 'Generosity') => {
+	// filter data by category
+	data = data
+	.filter(entry => sortBy in entry)
+	.sort((left, right) => right[sortBy] - left[sortBy])
+	.slice(0, 10)
+
+	// create a list of unique categories
+	const categories = [...getUniqueCategories(data)]
+
+	// get items
+	const elTableHead = createTableHead(categories)
+	const elTableBody = createTableBody(categories, data)
+	const elTable = document.getElementById('data-table')
+
+	// add items to table
+	elTable.appendChild(elTableHead)
+	elTable.appendChild(elTableBody)
+}
+
+const createTableHead = (categories) => {
+	// Entry is a dictionary item.
+	// Categories is an array.
+	const elTableHead = document.createElement('thead')
+	const elTableRow = document.createElement('tr')
+	categories.forEach((category) => {
+		// Create element.
+		const elTableEntry = document.createElement('th')
+		// Add text content to element.
+		console.log(category)
+		elTableEntry.textContent = String(category)
+		// Append data as child to table row.
+		elTableRow.appendChild(elTableEntry)
+	})
+	// the table row is full; use it in the head.
+	elTableHead.appendChild(elTableRow)
+	// the head is complete; return it.
+	return elTableHead
+}
+
+// Data is the data list from json.
+// Categories is an array.
+const createTableBody = (categories, data) => {
+	// Create the empty body.
+	const elTableBody = document.createElement('tbody')
+	// Add each entry as a row to the body.
+	data.forEach((entry) => {
+		// Create a fully populated table-row element.
+		// This uses another helper function.
+		const elTableRow = createTableRow(entry, categories)
+		// Append row as child to table body.
+		elTableBody.appendChild(elTableRow)
+	})
+	// the body is complete; return it.
+	return elTableBody
+}
+
+// Entry is a dictionary item.
+// Categories is an array.
+const createTableRow = (entry, categories) => {
+	const elTableRow = document.createElement('tr')
+	categories.forEach((category) => {
+		// Create element.
+		const elTableData = document.createElement('td')
+		// Add text content to element.
+		let text = ''
+		if (category in entry) {
+			text = `${entry[category]}`
+		}
+		elTableData.textContent = text
+		// Append data as child to table row.
+		elTableRow.appendChild(elTableData)
+	})
+	// the table row is full; return it.
+	return elTableRow
+}
+
 // Returns a set of unique countries.
 const getUniqueCountries = (data) => {
-	// Get a set of all unique countries.
 	// Start by initializing aforementioned set.
 	const countries = new Set()
 	// Reducer gets ran recursively for each entry
@@ -43,6 +119,25 @@ const getUniqueCountries = (data) => {
 	// accumulator, which gets modified/filled.
 	data.reduce(reducer, countries)
 	return countries
+}
+
+// Returns a set of unique categories.
+const getUniqueCategories = (data) => {
+	// Start by initializing aforementioned set.
+	const categories = new Set()
+	// Reducer gets ran recursively for each entry
+	// in the data array, which is called with reduce.
+	const reducer = (accumulator, entry) => {
+		// We need to ensure every key is covered here.
+		for (const category in entry) {
+			accumulator.add(category)
+		}
+		return accumulator
+	}
+	// Categories is the default start-value for the
+	// accumulator, which gets modified/filled.
+	data.reduce(reducer, categories)
+	return categories
 }
 
 const StudyHappiness = (year) => {
@@ -61,6 +156,8 @@ const StudyHappiness = (year) => {
 			'yearText': year,
 			'numCountriesText': countries.size,
 		})
+
+		createFullTable(data)
 	})
 }
 
